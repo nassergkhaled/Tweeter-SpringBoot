@@ -1,10 +1,7 @@
 package com.example.advancehw.Dao;
 
 import com.example.advancehw.Entity.*;
-import com.example.advancehw.Repository.HiddenTweetsRepository;
-import com.example.advancehw.Repository.SavedTweetsRepository;
-import com.example.advancehw.Repository.TweetsRepository;
-import com.example.advancehw.Repository.UsersRepository;
+import com.example.advancehw.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +18,8 @@ public class TweetsDao {
     private SavedTweetsRepository savedTweetsRepository;
     @Autowired
     private HiddenTweetsRepository hiddenTweetsRepository;
+    @Autowired
+    private LikesRepository likesRepository;
 
     public List<TweetsEntity> showAll()
     {
@@ -117,8 +116,8 @@ public class TweetsDao {
         try {
             Optional<UsersEntity> user = Optional.ofNullable(this.userRepository.findAllById(userId));
             if (user.isPresent()) {
-                Optional<TweetsEntity> tweetToSave = Optional.ofNullable(this.tweetRepository.findAllById(tweetId));
-                if (tweetToSave.isPresent()) {
+                Optional<TweetsEntity> tweetToHide = Optional.ofNullable(this.tweetRepository.findAllById(tweetId));
+                if (tweetToHide.isPresent()) {
                     Optional<HiddenTweetsEntity> hiddenTweet = Optional.ofNullable(this.hiddenTweetsRepository.findAllByUseridAndTweetid(userId,tweetId));
                     if(hiddenTweet.isEmpty()) {
                     HiddenTweetsEntity entity = new HiddenTweetsEntity();
@@ -165,8 +164,63 @@ public class TweetsDao {
             }
             catch (Exception e)
             {
-                return e.getMessage();
-                //return "Failed";
+                return "Failed";
             }
+    }
+
+    public String LikeTweet(Integer tweetId, Integer userId) {
+        try {
+            Optional<UsersEntity> user = Optional.ofNullable(this.userRepository.findAllById(userId));
+            if (user.isPresent()) {
+                Optional<TweetsEntity> tweetToLike = Optional.ofNullable(this.tweetRepository.findAllById(tweetId));
+                if (tweetToLike.isPresent()) {
+                    Optional<LikesEntity> likedTweet = Optional.ofNullable(this.likesRepository.findAllByUseridAndTweetid(userId,tweetId));
+                    if(likedTweet.isEmpty()) {
+                        LikesEntity entity = new LikesEntity();
+                        entity.setTweetid(tweetId);
+                        entity.setUserid(userId);
+                        this.likesRepository.save(entity);
+                        return "Succeed";
+                    }
+                    else
+                    {
+                        return "Already Liked";
+                    }
+                } else {
+                    return "No Tweet With The Given Id";
+                }
+            } else {
+                return "No User With The Given Id";
+            }
+        }
+        catch (Exception e)
+        {
+            return "Failed";
+        }
+    }
+
+    public String unLikeTweet(Integer tweetId, Integer userId) {
+        try {
+            Optional<UsersEntity> user = Optional.ofNullable(this.userRepository.findAllById(userId));
+            if (user.isPresent()) {
+                Optional<TweetsEntity> tweet = Optional.ofNullable(this.tweetRepository.findAllById(tweetId));
+                if (tweet.isPresent()) {
+                    Optional<LikesEntity> tweetToUnLike=  Optional.ofNullable(this.likesRepository.findAllByUseridAndTweetid(userId,tweetId));
+                    if(tweetToUnLike.isEmpty()){
+                        return "You're Not Liking The Tweet In The First Place";}
+                    int id=tweetToUnLike.get().getId();
+                    this.likesRepository.deleteById(id);
+                    return "Success";
+                }else {
+                    return "No Tweet With The Given Id";
+                }
+            } else {
+                return "No User With The Given Id";
+            }
+        }
+        catch (Exception e)
+        {
+            return "Failed";
+        }
     }
 }

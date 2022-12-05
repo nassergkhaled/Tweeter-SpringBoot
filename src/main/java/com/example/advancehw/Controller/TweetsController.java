@@ -68,4 +68,18 @@ public class TweetsController {
         return this.tweetDao.unHideTweet(tweetId,userId);
     }
 
+    @GetMapping(path = "/like/{tweetId}/{userId}")
+    public String likeTweet (@PathVariable ("tweetId")Integer tweetId,
+                             @PathVariable ("userId")Integer userId)
+    {
+        return this.tweetDao.LikeTweet(tweetId,userId);
+    }
+
+    @DeleteMapping(path = "/unlike/{tweetId}/{userId}")
+    public String unLikeTweet (@PathVariable ("tweetId")Integer tweetId,
+                               @PathVariable ("userId")Integer userId)
+    {
+        return this.tweetDao.unLikeTweet(tweetId,userId);
+    }
+
 }
