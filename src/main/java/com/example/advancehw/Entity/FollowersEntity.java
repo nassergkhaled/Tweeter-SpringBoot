@@ -1,11 +1,8 @@
 package com.example.advancehw.Entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "followers")
@@ -16,8 +13,10 @@ public class FollowersEntity {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
-    public int followedid;
-    public int followerid;
+    @Column(name="followedid", nullable = false, unique = true)
+    public int followedId;
+    @Column(name="followerid", nullable = false, unique = true)
+    public int followerId;
 
 
 }
