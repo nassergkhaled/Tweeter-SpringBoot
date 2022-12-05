@@ -1,5 +1,6 @@
 package com.example.advancehw.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,6 +16,11 @@ public class SavedTweetsEntity {
     public Integer id;
     public int userid;
     public int tweetid;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userid",insertable = false,updatable = false)
+    @JsonBackReference
+    private UsersEntity user;
 
 
 }

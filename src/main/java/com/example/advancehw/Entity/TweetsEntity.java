@@ -1,10 +1,12 @@
 package com.example.advancehw.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "tweets")
@@ -27,4 +29,12 @@ public class TweetsEntity {
     @JoinColumn(name = "userid",insertable = false,updatable = false)
     @JsonBackReference
     private UsersEntity user;
+
+    @OneToMany(mappedBy = "tweet")
+    @JsonManagedReference
+    private List<CommentsEntity> tweetComments;
+
+    @OneToMany(mappedBy = "tweet")
+    @JsonManagedReference
+    private List<LikesEntity> tweetLikes;
 }

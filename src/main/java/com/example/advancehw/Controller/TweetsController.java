@@ -2,11 +2,16 @@ package com.example.advancehw.Controller;
 
 import com.example.advancehw.Dao.TweetsDao;
 import com.example.advancehw.Dao.UsersDao;
+import com.example.advancehw.Entity.CommentsEntity;
+import com.example.advancehw.Entity.LikesEntity;
 import com.example.advancehw.Entity.TweetsEntity;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -22,12 +27,12 @@ public class TweetsController {
     {
         return this.tweetDao.addNewTweetAndUpdateTweet(tweet);
     }
+
     @GetMapping(path = "/view/{idOfUser}")
     public List<TweetsEntity>viewAllUserTweets(@PathVariable ("idOfUser") Integer id)
     {
         return this.userDao.viewAllTweetsForUser(id);
     }
-
 
     @GetMapping(path = "/view")
     public List<TweetsEntity>viewAll()
@@ -52,6 +57,12 @@ public class TweetsController {
                              @PathVariable ("userId")Integer userId)
     {
         return this.tweetDao.unSaveTweet(tweetId,userId);
+    }
+
+    @GetMapping(path = "/save/view/{userid}")
+    public List<TweetsEntity> viewAllSavedTweets(@PathVariable("userid") Integer userId)
+    {
+        return this.tweetDao.viewAllSavedTweets(userId);
     }
 
     @GetMapping(path = "/hide/{tweetId}/{userId}")
@@ -82,4 +93,32 @@ public class TweetsController {
         return this.tweetDao.unLikeTweet(tweetId,userId);
     }
 
+    @GetMapping(path = "/comment")
+    public String commentOnTweet(@RequestBody CommentsEntity comment) throws ParseException {
+        return this.tweetDao.commentOnATweet(comment);
+    }
+
+    @GetMapping(path = "/comments/view/{tweetid}")
+    public List<CommentsEntity> viewTweetComments(@PathVariable ("tweetid") Integer tweetId)
+    {
+        return this.tweetDao.viewTweetComments(tweetId);
+    }
+
+    @DeleteMapping(path = "/comments/delete/{commentid}")
+    public String deleteCommentOfATweet(@PathVariable ("commentid") Integer CommentId)
+    {
+        return this.tweetDao.deleteCommentOfATweet(CommentId);
+    }
+
+    @GetMapping(path = "/likes/view/{tweetid}")
+    public List<LikesEntity> viewLikesOfTweet(@PathVariable ("tweetid") Integer tweetId)
+    {
+        return this.tweetDao.viewLikesOfTweet(tweetId);
+    }
+
+    @GetMapping(path = "/likes/count/{tweetid}")
+    public Integer countLikesOfTweet(@PathVariable ("tweetid") Integer tweetId)
+    {
+        return this.tweetDao.countLikesOfTweet(tweetId);
+    }
 }
