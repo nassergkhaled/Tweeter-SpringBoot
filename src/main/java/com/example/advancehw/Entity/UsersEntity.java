@@ -33,5 +33,9 @@ public class UsersEntity {
     @JsonManagedReference
     private List<SavedTweetsEntity> savedTweets;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<FollowersEntity> followedUsers;
+
 
 }

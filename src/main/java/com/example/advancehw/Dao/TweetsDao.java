@@ -100,8 +100,7 @@ public class TweetsDao {
                 return "No User With The Given Id";
             }
         } catch (Exception e) {
-            return e.getMessage();
-            //return "Failed";
+           return "Failed";
         }
     }
 
@@ -247,12 +246,14 @@ public class TweetsDao {
             {
                 List<CommentsEntity>emptyComment=new ArrayList<>();
                 return emptyComment;
+                //No Tweet With Given Id
             }
         }
         catch (Exception e)
         {
             List<CommentsEntity>emptyComment=new ArrayList<>();
             return emptyComment;
+            //Error
         }
     }
 
@@ -287,31 +288,34 @@ public class TweetsDao {
                 {
                     List<LikesEntity>emptyLike=new ArrayList<>();
                     return emptyLike;
+                    //No Tweet With Given Id
                 }
         }
         catch (Exception e)
         {
             List<LikesEntity>emptyLike=new ArrayList<>();
             return emptyLike;
+            //Error
         }
     }
 
-    public Integer countLikesOfTweet(Integer tweetId) {
+    public String countLikesOfTweet(Integer tweetId) {
         try {
         Optional<TweetsEntity> tweetToCountLikesOf = Optional.ofNullable(this.tweetRepository.findAllById(tweetId));
         if (tweetToCountLikesOf.isPresent()) {
             List<LikesEntity>tweetLikes=tweetToCountLikesOf.get().getTweetLikes();
-            return tweetLikes.size();
+            Integer response = tweetLikes.size();
+            return response.toString();
         }
         else
         {
-            return -2;
+            return"No Tweet With Given Id";
         }
 
     }
         catch (Exception e)
         {
-            return -1;
+           return "Error";
         }
     }
 
@@ -333,17 +337,17 @@ public class TweetsDao {
         }
         else
         {
-
-            System.out.println("User Not Found");
+            //User Not Found
             List<TweetsEntity> EmptySavedTweetsList=new ArrayList<>();
             return EmptySavedTweetsList;
         }
     }
         catch (Exception e )
         {
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
             List<TweetsEntity> EmptySavedTweetsList=new ArrayList<>();
             return EmptySavedTweetsList;
+            //Error
         }
     }
 }

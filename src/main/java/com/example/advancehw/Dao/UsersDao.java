@@ -4,6 +4,7 @@ import com.example.advancehw.Entity.FollowersEntity;
 import com.example.advancehw.Entity.TweetsEntity;
 import com.example.advancehw.Entity.UsersEntity;
 import com.example.advancehw.Repository.FollowersRepository;
+import com.example.advancehw.Repository.TweetsRepository;
 import com.example.advancehw.Repository.UsersRepository;
 import com.example.advancehw.bodies.ResetPasswordBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class UsersDao {
     @Autowired
     private FollowersRepository followersRepository;
 
+    @Autowired
+    private TweetsRepository tweetsRepository;
     public List<UsersEntity> showAll()
     {
         return this.userRepository.findAll();
@@ -32,7 +35,14 @@ public class UsersDao {
             if (user.isPresent()) {
                 return "Welcome " + user.get().getFullName();
             } else {
-                return "Failed To Login";
+                Optional<UsersEntity> user2;
+                user2 = Optional.ofNullable(this.userRepository.findAllByUserName(userName));
+                if(user2.isPresent())
+                {
+                    return "Wrong Password";
+                }
+
+                return "No User With The Entered Username";
             }
         }
         catch (Exception e)
@@ -65,12 +75,14 @@ public class UsersDao {
             } else {
                 List<TweetsEntity> emptyList = new ArrayList<>();
                 return emptyList;
+                //No User With Given Id
             }
         }
         catch(Exception e)
         {
             List<TweetsEntity> emptyList = new ArrayList<>();
             return emptyList;
+            //Error
         }
     }
 
@@ -85,12 +97,14 @@ public class UsersDao {
         {
             UsersEntity emptyUser =new UsersEntity();
             return emptyUser;
+            //No User With Given Id
         }
     }
         catch (Exception e)
         {
             UsersEntity emptyUser =new UsersEntity();
             return emptyUser;
+            //Error
         }
     }
 
@@ -154,7 +168,69 @@ public class UsersDao {
         catch (Exception e)
         {
 
+            System.out.println(e.getMessage());
             return "Failed";
+        }
+    }
+
+    public List<TweetsEntity> viewFollowedUsersTweets(Integer userId) {
+        try {
+            Optional<UsersEntity> user = Optional.ofNullable(this.userRepository.findAllById(userId));
+            if(user.isPresent())
+            {
+                if(user.get().getFollowedUsers().size()==0)
+                {
+                    //return "You're Not Following Any One";
+                    return new ArrayList<>();
+                }
+                else
+                {
+                    List<FollowersEntity>entity=user.get().getFollowedUsers();
+                    //System.out.println(entity.toString());
+                    int counter=entity.size();
+                    int outerCounter =entity.size();
+                    //System.out.println(counter);
+                    List<UsersEntity> followedUsers =new ArrayList<>();
+                    while (counter!=0)
+                    {
+                        followedUsers.add(this.userRepository.findAllById(entity.get(counter-1).getFollowedId()));
+                        counter--;
+                    }
+                    List<TweetsEntity>followedUsersTweets=new ArrayList<>();
+                    while (outerCounter !=0)
+                    {
+                        int innerCounter= followedUsers.get(outerCounter-1).getUserTweets().size();
+                        //System.out.println(innerCounter+"   "+outerCounter);
+                        UsersEntity followedUser = followedUsers.get(outerCounter-1);
+                        while (innerCounter!=0)
+                        {
+                            List<TweetsEntity>followedUserTweets = followedUser.getUserTweets();
+                            followedUsersTweets.addAll(followedUserTweets);
+                            //followedUsersTweets.add(this.tweetsRepository.findAllById(followedUsers.get(outerCounter-1).getUserTweets().get(innerCounter-1)));
+                            innerCounter--;
+                            //System.out.println("Finished");
+                        }
+                        outerCounter--;
+                    }
+                   // return followedUsers.toString();
+                    //System.out.println(followedUsersTweets.toString());
+                    return followedUsersTweets;
+                }
+            }
+            else
+            {
+                //No User With Entered Id
+                //return "No User With Entered Id";
+                return new ArrayList<>();
+            }
+        }
+        catch (Exception e)
+        {
+
+
+            System.out.println(e.getMessage()+"\n"+e.toString());
+            //return "Error";
+            return new ArrayList<>();
         }
     }
 }

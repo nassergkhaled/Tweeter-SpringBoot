@@ -8,4 +8,5 @@ public interface TweetsRepository extends JpaRepository<TweetsEntity, Integer> {
     public TweetsEntity findAllById(Integer id) ;
 
 
+    public TweetsEntity findAllById(TweetsEntity tweetsEntity);
 }

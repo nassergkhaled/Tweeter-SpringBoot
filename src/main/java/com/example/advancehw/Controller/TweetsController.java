@@ -117,8 +117,8 @@ public class TweetsController {
     }
 
     @GetMapping(path = "/likes/count/{tweetid}")
-    public Integer countLikesOfTweet(@PathVariable ("tweetid") Integer tweetId)
+    public String countLikesOfTweet(@PathVariable ("tweetid") Integer tweetId)
     {
-        return this.tweetDao.countLikesOfTweet(tweetId);
+        return this.tweetDao.countLikesOfTweet(tweetId).toString();
     }
 }

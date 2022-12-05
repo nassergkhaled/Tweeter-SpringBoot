@@ -1,6 +1,7 @@
 package com.example.advancehw.Controller;
 
 import com.example.advancehw.Dao.UsersDao;
+import com.example.advancehw.Entity.FollowersEntity;
 import com.example.advancehw.Entity.TweetsEntity;
 import com.example.advancehw.Entity.UsersEntity;
 import com.example.advancehw.bodies.LogInBody;
@@ -56,12 +57,18 @@ public class UsersController {
         return this.userDao.followUser(followerId,followedId);
     }
 
-    @GetMapping(path = "unfollow/{followerId}/{followedId}")
+    @DeleteMapping(path = "unfollow/{followerId}/{followedId}")
     public String unFollowUser( @PathVariable ("followerId") Integer followerId,
                               @PathVariable("followedId") Integer followedId
     )
     {
         return this.userDao.unFollowUser(followerId,followedId);
+    }
+
+    @GetMapping(path = "/followed/tweets/{userid}")
+    public List<TweetsEntity> viewFollowedUsersTweets(@PathVariable("userid") Integer userId)
+    {
+        return this.userDao.viewFollowedUsersTweets(userId);
     }
 
 }
